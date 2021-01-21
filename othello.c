@@ -3,7 +3,9 @@
 //
 // Author(s): 
 //***************************************************
-
+#define EMPTY '-'
+#define WHITE 'W'
+#define BLACK 'B'
 #include "othello.h"
 
 // Constructs and returns a string representation of the board
@@ -74,30 +76,50 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 	if ( row > size || col > size || row < 0 || col < 0 ) 
 		return false; 
 
-	if ( board[row][col] != '-' ) {
+	if ( board[row][col] != EMPTY ) {
 		return false; 
 	}
 	
 	if( row - 1 != size ) {
 		if ( board[row+1][col] == opposite ) {
-			return true; 
+			for ( int i = row + 1 ; i < size; i++) {// check to right
+				if ( board[i][col] == disc ) 
+					return true; 
+				else if ( board[i][col] == EMPTY )
+					return false;
+			}
 		}
 	}
 
-	if ( row != 0 ) {
+	if ( row != 0 ) { // check left
 		if ( board[row-1][col] == opposite ) {
-			return true; 
+			for (int i = row - 1; i > 0; i--) {
+				if (board[i][col] == disc)
+					return true; 
+				else if ( board[i][col] == EMPTY ) 
+					return false; 
+			}
 		}
 	}
 
-	if( col - 1 != size ) {
+	if( col - 1 != size ) { // check down 
 		if ( board[row][col+1] == opposite ) {
-			return true; 
+			for ( int i = col + 1; i < size; i++ ) {
+				if (board[row][i] == disc)
+					return true; 
+				else if ( board[row][i] == EMPTY ) 
+					return false; 
+			}
 		}
 	}
-	if ( col != 0 ) {
+	if ( col != 0 ) { // check up 
 		if ( board[row][col-1] == opposite ) {
-			return true; 
+			for ( int i = col - 1; i > 0 ; i--) {
+				if( board[row][i] == disc) 
+					return true;
+				else if ( board[row][i] == EMPTY )
+					return false; 
+			}	
 		}
 	}
 	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION
@@ -176,7 +198,13 @@ void placeDiscAt(int size, char board[][size], int row, int col, char disc)
 // Returns true if a valid move for disc is available; false otherwise
 bool isValidMoveAvailable(int size, char board[][size], char disc)
 {
-	return true;	// REPLACE THIS WITH YOUR IMPLEMENTATION
+	for ( int i = 0; i < size; i++ ) {
+		for ( int j = 0; j < size; j++ ) {
+			if(isValidMove(size, board, i, j, disc))
+			       return true; 	
+		}	
+	}
+	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION
 }
 
 // Returns true if the board is fully occupied with discs; false otherwise
@@ -198,6 +226,8 @@ bool isGameOver(int size, char board[][size])
 	if ( isBoardFull( size, board )) {
 		return true; 
 	}
+	else if ( !isValidMoveAvailable(size, board, 'W') && !isValidMoveAvailable(size, board, 'B'))
+		return true; 
 	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION
 }
 
@@ -205,9 +235,23 @@ bool isGameOver(int size, char board[][size])
 // In case of a tie, it returns TIE. When called before the game is over, it returns 0.
 char checkWinner(int size, char board[][size])
 {
+	int white = 0;
+	int black = 0; 
 	if (!isGameOver(size,board)) {
 		return 0;
 	}
-
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			if ( board[i][j] == WHITE )
+				white++; 
+			else if ( board[i][j] == BLACK )
+				black++; 
+		}
+	}
+	
+	if ( white > black )
+		return WHITE;
+	else if ( white < black )
+		return BLACK; 
 	return TIE;	// REPLACE THIS WITH YOUR IMPLEMENTATION
 }
