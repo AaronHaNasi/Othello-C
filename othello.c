@@ -106,7 +106,9 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 // Places the disc at location row,col and flips the opponent discs as needed
 void placeDiscAt(int size, char board[][size], int row, int col, char disc)
 {
-	char oppositeDisc = getOpposite(disc); 
+	char oppositeDisc = getOpposite(disc);
+       	int piecesToFlip = 0; 
+
 	if (!isValidMove(size,board,row,col,disc)) {
 		return;
 	}
@@ -114,41 +116,59 @@ void placeDiscAt(int size, char board[][size], int row, int col, char disc)
 		board[row][col] = disc; // place disc
 		if ( row < size ) {
 		       	// make sure to not cause a segfault, make sure it is not on side
-			for ( int i = row + 1; i < size; i++ ) {
+			for ( int i = row + 1; i < size; i++ ) { // flip right
 				if ( board[i][col] == oppositeDisc ) {
-					board[i][col] = disc; 
+					piecesToFlip++; 
+				}
+				else if ( board[i][col] == disc ) {
+					for ( int j = row + 1; j < i; j++ ) {
+						board[j][col] = disc; 
+					}
 				}
 				else 
 					break; 
 			}
 		}
 		if ( row > 0 ) {
-			for ( int i = row - 1; i > 0; i-- ) {
+			for ( int i = row - 1; i > 0; i-- ) { // flip left
 				if ( board[i][col] == oppositeDisc ) {
-					board[i][col] = disc; 
+					continue; 
+				}
+				else if ( board[i][col] == disc ) {
+					for ( int j = row - 1; j > i; j-- ) {
+						board[j][col] = disc; 
+					}
 				}
 				else
 					break; 
 			}
 		}
 		if ( col < size ) {
-			for ( int i = col + 1; i < size; i++ ) {
+			for ( int i = col + 1; i < size; i++ ) { // flip down
 				if ( board[row][i] == oppositeDisc )
-					board[row][i] = disc; 
+					continue;
+				else if ( board[row][i] == disc ) {
+					for ( int j = col + 1; j < i; j++ ) {
+						board[row][j] = disc; 
+					}
+				}
 				else
 					break; 
 			}
 		}
-		if ( col > 0 ) {
+		if ( col > 0 ) { // flip up
 			for ( int i = col - 1; i > 0; i-- ) {
 				if ( board[row][i] == oppositeDisc )
-					board[row][i] = disc; 
+					continue; 
+			       	else if ( board[row][i] == disc ) {
+					for ( int j = col - 1; j > i; j-- ) {
+						board[row][j] = disc;
+					}
+				}	
 				else
 					break; 
 			}
 		}
-// flip disks here
-// 		 
 	}
 	// COMPLETE REST OF THIS FUNCTION
 }
