@@ -1,7 +1,7 @@
 //***************************************************
 // Filename: othello.c
 //
-// Author(s): 
+// Author(s): Aaron Bager
 //***************************************************
 #define EMPTY '-'
 #define WHITE 'W'
@@ -72,7 +72,7 @@ char getOpposite(char disc) {
 bool isValidMove(int size, char board[][size], int row, int col, char disc)
 {
 	char opposite = getOpposite(disc); 
-
+ 	bool nextToOpposite = false; 
 	if ( row > size || col > size || row < 0 || col < 0 ) 
 		return false; 
 
@@ -80,48 +80,118 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 		return false; 
 	}
 	
-	if( row - 1 != size ) {
+	if( row < size ) {
 		if ( board[row+1][col] == opposite ) {
 			for ( int i = row + 1 ; i < size; i++) {// check to right
-				if ( board[i][col] == disc ) 
+				if ( board[i][col] == disc && nextToOpposite) 
 					return true; 
 				else if ( board[i][col] == EMPTY )
-					return false;
+					break;
+				else if ( board[i][col] == opposite )
+					nextToOpposite = true; 	
 			}
 		}
 	}
+	
+	nextToOpposite = false; 
 
-	if ( row != 0 ) { // check left
+	if ( row > 0 ) { // check left
 		if ( board[row-1][col] == opposite ) {
 			for (int i = row - 1; i > 0; i--) {
-				if (board[i][col] == disc)
+				if (board[i][col] == disc && nextToOpposite)
 					return true; 
 				else if ( board[i][col] == EMPTY ) 
-					return false; 
+					break; 
+				else if ( board[i][col] == opposite )
+					nextToOpposite = true; 
 			}
 		}
 	}
+	
+	nextToOpposite = false; 
 
-	if( col - 1 != size ) { // check down 
+	if( col < size ) { // check down 
 		if ( board[row][col+1] == opposite ) {
 			for ( int i = col + 1; i < size; i++ ) {
-				if (board[row][i] == disc)
+				if (board[row][i] == disc && nextToOpposite)
 					return true; 
 				else if ( board[row][i] == EMPTY ) 
-					return false; 
+					break; 
+				else if ( board[row][i] == opposite )
+					nextToOpposite = true; 
 			}
 		}
 	}
-	if ( col != 0 ) { // check up 
+	
+	nextToOpposite = false; 
+
+	if ( col > 0 ) { // check up 
 		if ( board[row][col-1] == opposite ) {
 			for ( int i = col - 1; i > 0 ; i--) {
-				if( board[row][i] == disc) 
+				if( board[row][i] == disc /* && nextToOpposite*/ ) 
 					return true;
 				else if ( board[row][i] == EMPTY )
-					return false; 
+					break; 
+				else if ( board[row][i] == opposite )
+					nextToOpposite = true; 
 			}	
 		}
 	}
+	
+	nextToOpposite = false; 
+
+	if ( row > 0 && col > 0) { // up & left
+		if ( board[row-1][col-1] == opposite ) {
+			for (int i = row - 1, j = col -1; i > 0 && j > 0; i--, j--) {
+				if ( board[i][j] == disc && nextToOpposite ) 
+					return true;
+				else if ( board[i][j] == EMPTY ) 
+					break; 
+				else if ( board[i][j] == opposite )
+					nextToOpposite = true; 
+			}
+		}
+	}
+
+	nextToOpposite = false; 
+
+	if ( row < size && col > 0 ) {
+		for ( int i = row + 1, j = col - 1; i < size && j > 0; i++, j--) {
+			if ( board[i][j] == disc && nextToOpposite)
+				return true; 
+			else if ( board[i][j] == EMPTY ) 
+				break;  
+			else if ( board[i][j] == opposite )
+				nextToOpposite = true; 
+
+		}
+	}
+
+	nextToOpposite = false; 
+
+	if ( row > 0 && col < size) {
+		for ( int i = row - 1, j = col + 1; i > 0 && j < size; i--, j++) {
+			if ( board[i][j] == disc && nextToOpposite ) 
+				return true; 
+			else if ( board[i][j] == EMPTY ) 
+				break;  
+			else if ( board[i][j] == opposite ) 
+				nextToOpposite = true; 
+		}
+	}
+
+	nextToOpposite = false; 
+
+	if ( row < size && col < size) {
+		for ( int i = row + 1, j = col + 1; i < size && j < size; i++, j++) {
+			if ( board[i][j] == disc && nextToOpposite ) 
+				return true;
+			else if ( board[i][j] == EMPTY)
+				break;
+			else if ( board[i][j] == opposite )
+				nextToOpposite = true; 	
+		}
+	}	
 	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION
 }
 
@@ -191,6 +261,57 @@ void placeDiscAt(int size, char board[][size], int row, int col, char disc)
 					break; 
 			}
 		}
+		if ( row > 0 && col > 0) {
+			for ( int i = row - 1, j = col - 1; i > 0 && j > 0; i--, j-- ) {
+				if ( board[i][j] == oppositeDisc) 
+					continue; 
+				else if ( board[i][j] == disc) {
+					for ( int k = row, l = col; k > i && l > j; k--, l--) {
+						board[k][l] = disc; 
+					}
+				}
+				else
+					break; 
+			}
+		}
+		if ( row < size && col > 0) {
+			for ( int i = row + 1, j = col - 1; i < size && j > 0; i++, j-- ) {
+				if ( board[i][j] == oppositeDisc)
+					continue; 
+				else if ( board[i][j] == disc) {
+					for ( int k = row, l = col; k < i && l > j; k++, l--) {
+						board[k][l] = disc; 
+					}
+				}
+				else
+					break; 
+			}
+		}
+		if ( row > 0 && col < size ) {
+			for ( int i = row - 1, j = col + 1; i > 0 && j < size; i--, j++ ) {
+				if ( board[i][j] == oppositeDisc) 
+					continue; 
+				else if ( board[i][j] == disc) {
+					for ( int k = row, l = col; k > i && l < j; k--, l++ ) {
+						board[k][l] = disc; 
+					}
+				}
+				else 
+					break; 
+			}
+		}
+		if ( row < size && col < size ) {
+			for ( int i = row + 1, j = col + 1; i < size && j < size; i++, j++ ) {
+				if ( board[i][j] == oppositeDisc)
+					continue; 
+				else if ( board[i][j] == disc) 
+					for ( int k = row, l = col; k < i && l < j; k++, l++) {
+						board[k][l] = disc; 
+					}
+				else 
+					break; 
+			}
+		}
 	}
 	// COMPLETE REST OF THIS FUNCTION
 }
@@ -254,4 +375,9 @@ char checkWinner(int size, char board[][size])
 	else if ( white < black )
 		return BLACK; 
 	return TIE;	// REPLACE THIS WITH YOUR IMPLEMENTATION
+}
+
+// Used in GDB to print specific values in the array using GDB
+char printValue(int size, char board[][size], int row, int col) {
+	printf("%c", board[row][col]);
 }
