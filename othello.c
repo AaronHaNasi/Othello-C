@@ -72,7 +72,6 @@ char getOpposite(char disc) {
 bool isValidMove(int size, char board[][size], int row, int col, char disc)
 {
 	char opposite = getOpposite(disc); 
- 	bool nextToOpposite = false; 
 	if ( row > size || col > size || row < 0 || col < 0 ) 
 		return false; 
 
@@ -80,238 +79,203 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 		return false; 
 	}
 	
-	if( row < size ) {
-		if ( board[row+1][col] == opposite ) {
-			for ( int i = row + 1 ; i < size; i++) {// check to right
-				if ( board[i][col] == disc && nextToOpposite) 
-					return true; 
-				else if ( board[i][col] == EMPTY )
-					break;
-				else if ( board[i][col] == opposite )
-					nextToOpposite = true; 	
-			}
+	// check north tiles (up) 
+	if ( col - 2 >= 0 && board[row][col-1] == opposite ) {
+		for (int i = col - 2; i >= 0; i--) {
+			if ( board[row][i] == EMPTY )
+				break; 
+			else if ( board[row][i] == disc )
+				return true; 	
 		}
 	}
 	
-	nextToOpposite = false; 
+	// check east tiles (right)
+	if ( row + 2 < size && board[row+1][col] == opposite ) {
+		for (int i = row + 2; i <= size; i++) {
+			if ( board[i][col] == EMPTY )
+				break; 
+			else if ( board[i][col] == disc )
+				return true; 	
+		}
+	}
 
-	if ( row > 0 ) { // check left
-		if ( board[row-1][col] == opposite ) {
-			for (int i = row - 1; i > 0; i--) {
-				if (board[i][col] == disc && nextToOpposite)
-					return true; 
-				else if ( board[i][col] == EMPTY ) 
-					break; 
-				else if ( board[i][col] == opposite )
-					nextToOpposite = true; 
-			}
+	// check south tiles (down)
+	if ( col + 2 < size && board[row][col+1] == opposite ) {
+		for (int i = col + 2; i < size; i++) {
+			if ( board[row][i] == EMPTY )
+				break; 
+			else if ( board[row][i] == disc )
+				return true; 	
 		}
 	}
 	
-	nextToOpposite = false; 
-
-	if( col < size ) { // check down 
-		if ( board[row][col+1] == opposite ) {
-			for ( int i = col + 1; i < size; i++ ) {
-				if (board[row][i] == disc && nextToOpposite)
-					return true; 
-				else if ( board[row][i] == EMPTY ) 
-					break; 
-				else if ( board[row][i] == opposite )
-					nextToOpposite = true; 
-			}
-		}
-	}
-	
-	nextToOpposite = false; 
-
-	if ( col > 0 ) { // check up 
-		if ( board[row][col-1] == opposite ) {
-			for ( int i = col - 1; i > 0 ; i--) {
-				if( board[row][i] == disc /* && nextToOpposite*/ ) 
-					return true;
-				else if ( board[row][i] == EMPTY )
-					break; 
-				else if ( board[row][i] == opposite )
-					nextToOpposite = true; 
-			}	
-		}
-	}
-	
-	nextToOpposite = false; 
-
-	if ( row > 0 && col > 0) { // up & left
-		if ( board[row-1][col-1] == opposite ) {
-			for (int i = row - 1, j = col -1; i > 0 && j > 0; i--, j--) {
-				if ( board[i][j] == disc && nextToOpposite ) 
-					return true;
-				else if ( board[i][j] == EMPTY ) 
-					break; 
-				else if ( board[i][j] == opposite )
-					nextToOpposite = true; 
-			}
-		}
-	}
-
-	nextToOpposite = false; 
-
-	if ( row < size && col > 0 ) {
-		for ( int i = row + 1, j = col - 1; i < size && j > 0; i++, j--) {
-			if ( board[i][j] == disc && nextToOpposite)
-				return true; 
-			else if ( board[i][j] == EMPTY ) 
-				break;  
-			else if ( board[i][j] == opposite )
-				nextToOpposite = true; 
-
-		}
-	}
-
-	nextToOpposite = false; 
-
-	if ( row > 0 && col < size) {
-		for ( int i = row - 1, j = col + 1; i > 0 && j < size; i--, j++) {
-			if ( board[i][j] == disc && nextToOpposite ) 
-				return true; 
-			else if ( board[i][j] == EMPTY ) 
-				break;  
-			else if ( board[i][j] == opposite ) 
-				nextToOpposite = true; 
-		}
-	}
-
-	nextToOpposite = false; 
-
-	if ( row < size && col < size) {
-		for ( int i = row + 1, j = col + 1; i < size && j < size; i++, j++) {
-			if ( board[i][j] == disc && nextToOpposite ) 
-				return true;
-			else if ( board[i][j] == EMPTY)
+	// check west tiles (left)
+	if ( row - 2 >= 0 && board[row-1][col] == opposite ) {
+		for ( int i = row - 2; i >= 0; i-- ) {
+			if ( board[i][col] == EMPTY )
 				break;
-			else if ( board[i][j] == opposite )
-				nextToOpposite = true; 	
+			else if ( board[i][col] == disc )
+				return true; 
 		}
+	}
+
+	// check NW tiles
+	if ( row - 2 >= 0 && col - 2 >= 0 && board[row-1][col-1] == opposite ) {
+		for ( int i = row - 2, j = col - 2; i >= 0 && j >= 0; i--, j-- ) {
+			if ( board[i][j] == EMPTY )
+				break;
+			else if ( board[i][j] == disc )
+				return true; 
+		}
+	}
+
+	// check NE tiles
+	if ( row + 2 <= size && col - 2 >= 0 && board[row+1][col-1] == opposite ) {
+		for ( int i = row + 2, j = col - 2; i <= size && j >=0; i++, j-- ) {
+			if ( board[i][j] == EMPTY )
+				break; 
+			else if ( board[i][j] == disc )
+				return true; 
+		}
+	}
+
+	// check SW tiles
+	if ( row - 2 >= 0 && col + 2 <= size && board[row-1][col+1] == opposite ) {
+		for ( int i = row - 2, j = col + 2; i >= 0 && j <= size; i--, j++ ) {
+			if ( board[i][j] == EMPTY )
+				break;
+			else if ( board[i][j] == disc )
+				return true;
+		}	
 	}	
-	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION
+
+	// check SE tiles
+	if ( row + 2 <= size && col + 2 <= size && board[row+1][col+1] == opposite ) {
+		for ( int i = row + 2, j = col + 2; i <= size && j <= size; i++, j++ ) {
+			if ( board[i][j] == EMPTY )
+				break;
+			else if ( board[i][j] == disc )
+				return true; 
+		}
+	}
+	
+	return false; 
 }
 
 // Places the disc at location row,col and flips the opponent discs as needed
 void placeDiscAt(int size, char board[][size], int row, int col, char disc)
 {
-	char oppositeDisc = getOpposite(disc);
-       	int piecesToFlip = 0; 
+	char opposite = getOpposite(disc);
 
 	if (!isValidMove(size,board,row,col,disc)) {
 		return;
 	}
 	else {
-		board[row][col] = disc; // place disc
-		if ( row < size ) {
-		       	// make sure to not cause a segfault, make sure it is not on side
-			for ( int i = row + 1; i < size; i++ ) { // flip right
-				if ( board[i][col] == oppositeDisc ) {
-					piecesToFlip++; 
-				}
-				else if ( board[i][col] == disc ) {
-					for ( int j = row + 1; j < i; j++ ) {
-						board[j][col] = disc; 
-					}
-				}
-				else 
-					break; 
-			}
-		}
-		if ( row > 0 ) {
-			for ( int i = row - 1; i > 0; i-- ) { // flip left
-				if ( board[i][col] == oppositeDisc ) {
-					continue; 
-				}
-				else if ( board[i][col] == disc ) {
-					for ( int j = row - 1; j > i; j-- ) {
-						board[j][col] = disc; 
-					}
-				}
-				else
-					break; 
-			}
-		}
-		if ( col < size ) {
-			for ( int i = col + 1; i < size; i++ ) { // flip down
-				if ( board[row][i] == oppositeDisc )
-					continue;
+		board[row][col] = disc; 
+		// flip tiles to the north if applicable
+		if ( col - 2 >= 0 && board[row][col-1] == opposite ) {
+			for ( int i = col - 2; i >= 0; i-- ) {
+				if ( board[row][i] == EMPTY )
+					break;
 				else if ( board[row][i] == disc ) {
-					for ( int j = col + 1; j < i; j++ ) {
+					for ( int j = col - 1; j >= i; j-- ) {
 						board[row][j] = disc; 
 					}
 				}
-				else
-					break; 
 			}
 		}
-		if ( col > 0 ) { // flip up
-			for ( int i = col - 1; i > 0; i-- ) {
-				if ( board[row][i] == oppositeDisc )
-					continue; 
-			       	else if ( board[row][i] == disc ) {
-					for ( int j = col - 1; j > i; j-- ) {
-						board[row][j] = disc;
+
+		// flip tiles to the east if applicable
+		if ( row + 2 <= size && board[row+1][col] == opposite ) {
+			for ( int i = row + 2; i <= size; i++ ) {
+				if ( board[i][col] == EMPTY )
+					break; 
+				else if ( board[i][col] == disc ) {
+					for ( int j = row + 1; j <= i; j++ ) {
+						board[j][col] = disc; 
 					}
-				}	
-				else
+				}
+			}
+		}	
+	
+		// flip tiles to the south if applicable
+		if ( col + 2 <= size && board[row][col+1] == opposite ) {
+			for ( int i = col + 2; i <= size; i++ ) {
+				if ( board[row][i] == EMPTY )
 					break; 
+				else if ( board[row][i] == disc ) {
+					for ( int j = col + 1; j <= i; j++ ) {
+						board[row][j] = disc; 
+					}
+				}
 			}
 		}
-		if ( row > 0 && col > 0) {
-			for ( int i = row - 1, j = col - 1; i > 0 && j > 0; i--, j-- ) {
-				if ( board[i][j] == oppositeDisc) 
-					continue; 
-				else if ( board[i][j] == disc) {
-					for ( int k = row, l = col; k > i && l > j; k--, l--) {
+		
+		// flip tiles to the west if applicable 
+		if ( row - 2 >= 0 && board[row-1][col] == opposite ) {
+			for ( int i = row - 2; i >= 0; i-- ) {
+				if ( board[i][col] == EMPTY )
+					break;
+				else if ( board[i][col] == disc ) {
+					for ( int j = row - 1; j >= i; j-- ) {
+						board[j][col] = disc; 
+					}
+				}
+			}
+		}
+
+		// flip NW tiles
+		if ( col - 2 >= 0 && row - 2 >= 0 && board[row-1][col-1] == opposite ) {
+			for ( int i = row - 2, j = col - 2; i >= 0 && j >= 0; i--, j-- ) {
+				if ( board[i][j] == EMPTY )
+					break;
+				else if ( board[i][j] == disc ) {
+					for ( int k = row - 1, l = col - 1; k >= i && l >= j; k--, l-- ) {
 						board[k][l] = disc; 
 					}
 				}
-				else
-					break; 
 			}
 		}
-		if ( row < size && col > 0) {
-			for ( int i = row + 1, j = col - 1; i < size && j > 0; i++, j-- ) {
-				if ( board[i][j] == oppositeDisc)
-					continue; 
-				else if ( board[i][j] == disc) {
-					for ( int k = row, l = col; k < i && l > j; k++, l--) {
+
+		// flip NE tiles
+		if ( col - 2 >= 0 && row + 2 <= size && board[row+1][col-1] == opposite ) {
+			for ( int i = row + 2, j = col - 2; i <= size && j >= 0; i++, j--) {
+				if ( board[i][j] == EMPTY )
+					break;
+				else if ( board[i][j] == disc ) {
+					for ( int k = row + 1, l = col - 1; k <= i && l >= j; k++, l-- ) {
+						board[k][l] = disc; 		
+					}
+				}
+			}
+		}
+
+		// flip SW tiles 
+		if ( col + 2 <= size && row - 2 >= 0 && board[row-1][col+1] == opposite ) {
+			for ( int i = row - 2, j = col + 2; i >= 0 && j <= size; i--, j++ ) {
+				if ( board[i][j] == EMPTY )
+					break;
+				else if ( board[i][j] == disc ) {
+					for ( int k = row - 1, l = col + 1; k >= i && l <= j; k--, l++ ) {
+						board[k][l] = disc; 
+					}	
+				}
+			}
+		}
+
+		// flip SE tiles
+		if ( col + 2 <= size && row + 2 <= size && board[row+1][col+1] == opposite ) {
+			for ( int  i = row + 2,  j = col + 2; i <= size && j <= size; i++, j++ ) {
+				if ( board[i][j] == EMPTY ) 
+					break;
+				else if ( board[i][j] == disc ) {
+					for ( int k = row + 1, l = col + 1; k >= i && l >= j; k++, l++ ) {
 						board[k][l] = disc; 
 					}
 				}
-				else
-					break; 
 			}
 		}
-		if ( row > 0 && col < size ) {
-			for ( int i = row - 1, j = col + 1; i > 0 && j < size; i--, j++ ) {
-				if ( board[i][j] == oppositeDisc) 
-					continue; 
-				else if ( board[i][j] == disc) {
-					for ( int k = row, l = col; k > i && l < j; k--, l++ ) {
-						board[k][l] = disc; 
-					}
-				}
-				else 
-					break; 
-			}
-		}
-		if ( row < size && col < size ) {
-			for ( int i = row + 1, j = col + 1; i < size && j < size; i++, j++ ) {
-				if ( board[i][j] == oppositeDisc)
-					continue; 
-				else if ( board[i][j] == disc) 
-					for ( int k = row, l = col; k < i && l < j; k++, l++) {
-						board[k][l] = disc; 
-					}
-				else 
-					break; 
-			}
-		}
+
 	}
 	// COMPLETE REST OF THIS FUNCTION
 }
@@ -378,6 +342,6 @@ char checkWinner(int size, char board[][size])
 }
 
 // Used in GDB to print specific values in the array using GDB
-char printValue(int size, char board[][size], int row, int col) {
+void printValue(int size, char board[][size], int row, int col) {
 	printf("%c", board[row][col]);
 }
