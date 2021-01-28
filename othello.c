@@ -308,12 +308,17 @@ bool isBoardFull(int size, char board[][size])
 // Returns true if either the board is full or a valid move is not available for either disc; false otherwise
 bool isGameOver(int size, char board[][size])
 {	
+	return isBoardFull(size, board) || ( !isValidMoveAvailable(size, board, WHITE) && !isValidMoveAvailable(size, board, BLACK ));
+	/*
 	if ( isBoardFull( size, board )) {
 		return true; 
 	}
 	else if ( !isValidMoveAvailable(size, board, 'W') && !isValidMoveAvailable(size, board, 'B'))
 		return true; 
-	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION
+	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION 
+	
+*/
+
 }
 
 // If there is a winner, it returns the disc (BLACK or WHITE) associated with the winner.
