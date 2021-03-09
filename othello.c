@@ -130,7 +130,7 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 	}
 
 	// check NE tiles
-	if ( row + 2 <= size && col - 2 >= 0 && board[row+1][col-1] == opposite ) {
+	if ( row + 2 < size && col - 2 >= 0 && board[row+1][col-1] == opposite ) {
 		for ( int i = row + 2, j = col - 2; i <= size && j >=0; i++, j-- ) {
 			if ( board[i][j] == EMPTY )
 				break;
@@ -140,7 +140,7 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 	}
 
 	// check SW tiles
-	if ( row - 2 >= 0 && col + 2 <= size && board[row-1][col+1] == opposite ) {
+	if ( row - 2 >= 0 && col + 2 < size && board[row-1][col+1] == opposite ) {
 		for ( int i = row - 2, j = col + 2; i >= 0 && j <= size; i--, j++ ) {
 			if ( board[i][j] == EMPTY )
 				break;
@@ -150,7 +150,7 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 	}
 
 	// check SE tiles
-	if ( row + 2 <= size && col + 2 <= size && board[row+1][col+1] == opposite ) {
+	if ( row + 2 < size && col + 2 < size && board[row+1][col+1] == opposite ) {
 		for ( int i = row + 2, j = col + 2; i <= size && j <= size; i++, j++ ) {
 			if ( board[i][j] == EMPTY )
 				break;
@@ -168,6 +168,7 @@ void placeDiscAt(int size, char board[][size], int row, int col, char disc)
 	char opposite = getOpposite(disc);
 
 	if (!isValidMove(size,board,row,col,disc)) {
+		printf("Failure to place disc at %i %i\n", row, col); 
 		return;
 	}
 	else {
@@ -269,7 +270,7 @@ void placeDiscAt(int size, char board[][size], int row, int col, char disc)
 				if ( board[i][j] == EMPTY )
 					break;
 				else if ( board[i][j] == disc ) {
-					for ( int k = row + 1, l = col + 1; k >= i && l >= j; k++, l++ ) {
+					for ( int k = row + 1, l = col + 1; k <= i && l <= j; k++, l++ ) {
 						board[k][l] = disc;
 					}
 				}
@@ -309,16 +310,6 @@ bool isBoardFull(int size, char board[][size])
 bool isGameOver(int size, char board[][size])
 {
 	return isBoardFull(size, board) || ( !isValidMoveAvailable(size, board, WHITE) && !isValidMoveAvailable(size, board, BLACK ));
-	/*
-	if ( isBoardFull( size, board )) {
-		return true;
-	}
-	else if ( !isValidMoveAvailable(size, board, 'W') && !isValidMoveAvailable(size, board, 'B'))
-		return true;
-	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION
-
-*/
-
 }
 
 // If there is a winner, it returns the disc (BLACK or WHITE) associated with the winner.
@@ -354,9 +345,11 @@ void printValue(int size, char board[][size], int row, int col) {
 // used in GDB to print entire board during debugging process 
 void printBoard(int size, char board[][size]) {
 		for (int i = 0; i < size; i++) {
-			printf('\n');
+			//printf("\n");
 			for (int j = 0; j < size; j++) {
-				printf('%c', board[i][j]);
+				printf("%c", board[i][j]);
 			}
+			printf("\n"); 
 		}
 }
+
